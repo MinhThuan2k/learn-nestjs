@@ -6,7 +6,8 @@ import {
 import qs from 'qs';
 
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+import { ErrorLoggerExceptions } from './exceptions/ErrorLoggerExceptions';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -15,7 +16,8 @@ async function bootstrap() {
       querystringParser: (str) => qs.parse(str),
     }),
   );
-  app.useGlobalPipes(new ValidationPipe());
+  dotenv.config();
+  app.useGlobalFilters(new ErrorLoggerExceptions());
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
