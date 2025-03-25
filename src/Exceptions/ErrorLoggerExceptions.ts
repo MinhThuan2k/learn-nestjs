@@ -44,10 +44,7 @@ export class ErrorLoggerExceptions implements ExceptionFilter {
     }
 
     const APP_DEBUG = get_env('APP_DEBUG') === 'true';
-    if (
-      exception instanceof HttpException ||
-      exception instanceof BadRequestException
-    ) {
+    if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse() as {
         message: string | string[];
