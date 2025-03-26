@@ -2,15 +2,16 @@ import {
   ExceptionFilter,
   ArgumentsHost,
   Catch,
-  BadRequestException,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { UserException } from './UserException';
-import { ValidationException } from '../common/validations/ValidateExcetion';
 import { get_env } from '../common/helpers/function';
+import { JsonWebTokenError } from '@nestjs/jwt';
+import { ValidationException } from '../common/validations/ValidateException';
 
 @Catch()
 export class ErrorLoggerExceptions implements ExceptionFilter {
@@ -31,16 +32,20 @@ export class ErrorLoggerExceptions implements ExceptionFilter {
       statusCode: status,
     };
 
-    if (exception instanceof UserException) {
+    // Extend from HttpException
+    const handledNoReportExceptions = [UserException, ValidationException];
+
+    if (handledNoReportExceptions.some((ex) => exception instanceof ex)) {
       return response
         .status(exception.getStatus())
         .send(exception.getResponse());
     }
 
-    if (exception instanceof ValidationException) {
-      return response
-        .status(exception.getStatus())
-        .send(exception.getResponse());
+    if (exception instanceof JsonWebTokenError) {
+      return response.status(HttpStatus.UNAUTHORIZED).send({
+        message: exception.message,
+        status: status || 500,
+      });
     }
 
     const APP_DEBUG = get_env('APP_DEBUG') === 'true';

@@ -1,7 +1,8 @@
-export const jwtSecret =
-  'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.';
+import { get_env } from '../common/helpers/function';
 
-export const expiresIn: string | number = '6000s';
+export const jwtSecret = get_env('JWT_SECRET');
+
+export const expiresIn: number = 60 * 60 * 24 * 7; // 7 days
 
 export const signOptions = { expiresIn };
 

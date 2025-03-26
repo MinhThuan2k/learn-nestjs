@@ -1,23 +1,14 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 export class LoginTransform {
-  @Expose()
-  email: string;
-
-  @Exclude()
-  password: string;
-
   @Expose()
   token: string;
 
   @Expose()
-  @Transform(
-    ({ obj }) => ({
-      email: obj.email,
-      token: obj.token,
-      password: obj.password,
-    }),
-    { toClassOnly: true },
-  )
+  @Transform((obj) => ({
+    id: obj.value.id,
+    email: obj.value.email,
+    name: obj.value.name,
+  }))
   user: object;
 }

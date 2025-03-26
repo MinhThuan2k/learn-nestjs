@@ -10,6 +10,7 @@ import * as dotenv from 'dotenv';
 import { ErrorLoggerExceptions } from './exceptions/ErrorLoggerExceptions';
 import { setupSwagger } from './config/setupSwagger';
 import { VersioningType } from '@nestjs/common';
+import fastifyCsrfProtection from '@fastify/csrf-protection';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -18,16 +19,18 @@ async function bootstrap() {
       querystringParser: (str) => qs.parse(str),
     }),
   );
-  dotenv.config();
 
+  await app.register(fastifyCsrfProtection);
+  app.enableCors();
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI, // API: /v1/auth, /v2/auth
   });
+  app.useGlobalFilters(new ErrorLoggerExceptions());
 
+  dotenv.config();
   setupSwagger(app);
 
-  app.useGlobalFilters(new ErrorLoggerExceptions());
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

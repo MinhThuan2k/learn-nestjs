@@ -1,0 +1,52 @@
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import Redis from 'ioredis';
+import { host, port, prefix, prefixUser } from '../../config/redis';
+
+@Injectable()
+export class RedisService implements OnModuleInit, OnModuleDestroy {
+  public client: Redis;
+  public prefix: string = prefix;
+  public prefixUser: string = prefixUser;
+
+  constructor() {
+    this.client = new Redis({
+      host: host,
+      port: port || 6379,
+    });
+
+    this.client.on('connect', () => console.log('🔗 Redis connected'));
+    this.client.on('error', (err) => console.error('❌ Redis error:', err));
+  }
+
+  async onModuleInit() {
+    console.log('🔄 Checking Redis connection...');
+    await this.client.ping();
+    console.log('✅ Redis is ready!');
+  }
+
+  async onModuleDestroy() {
+    await this.client.quit(); // Đóng kết nối khi module bị destroy
+  }
+
+  async set(key: string, value: any, ttl?: number): Promise<void> {
+    const fullKey = this.prefix + ':' + key;
+    const stringValue = JSON.stringify(value);
+    let result;
+    if (ttl) {
+      result = await this.client.set(fullKey, stringValue, 'EX', ttl); // TTL = Time To Live
+    } else {
+      result = await this.client.set(fullKey, stringValue);
+    }
+    if (result !== 'OK') throw new Error('Redis SET failed');
+  }
+
+  async get<T>(key: string): Promise<T | null> {
+    const fullKey = this.prefix + ':' + key;
+    const data = await this.client.get(fullKey);
+    return data ? JSON.parse(data) : null;
+  }
+
+  async delete(key: string): Promise<void> {
+    await this.client.del(key);
+  }
+}
