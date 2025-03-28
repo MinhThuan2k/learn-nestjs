@@ -4,4 +4,5 @@ model User {
   password  String 
   name      String
   token     String?
+  password_changed_at DateTime?
 }

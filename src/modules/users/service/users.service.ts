@@ -1,11 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { FastifyRequestWithUser } from '../../../middleware/Authentication';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { UserDataService } from '../../../common/data/user.service';
+import { REQUEST } from '@nestjs/core';
+import { UserException } from '../../../exceptions/UserException';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly uerDataService: UserDataService,
+    @Inject(REQUEST)
+    private readonly request: FastifyRequestWithUser,
+  ) {}
 
   /**
    * Retrieves user information based on the provided user ID.
@@ -19,5 +28,22 @@ export class UsersService {
       },
     });
     return user;
+  }
+
+  async changePassword(dto: ChangePasswordDto) {
+    const { user } = this.request;
+
+    await this.prisma.user
+      .update({
+        where: { id: user.id },
+        data: {
+          password_changed_at: new Date(),
+          password: dto.password,
+        },
+        select: { id: true },
+      })
+      .catch(() => {
+        throw new UserException('User not found');
+      });
   }
 }

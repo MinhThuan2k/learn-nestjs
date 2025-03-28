@@ -5,7 +5,7 @@ import { LoginTransform } from '../transformers/login.transform';
 import { UserException } from '../../../exceptions/UserException';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
-import { expiresIn, isMultipleDevice } from '../../../config/jwt';
+import { expiresInRedis, isMultipleDevice } from '../../../config/jwt';
 import { Payload } from '../interface/InterfacePayload';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { RedisService } from '../../../common/redis/redis.service';
@@ -39,9 +39,9 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload);
 
     await this.redisService.set(
-      this.redisService.prefixUser + ':' + token,
+      this.redisService.prefixUser + ':' + user.id + ':' + token,
       token,
-      expiresIn,
+      expiresInRedis,
     );
     const result = plainToClass(LoginTransform, {
       token: token,

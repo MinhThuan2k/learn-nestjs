@@ -6,12 +6,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
-import { expiresIn, jwtSecret } from '../config/jwt';
+import { expiresInRedis, jwtSecret } from '../config/jwt';
 import { FastifyRequest } from 'fastify';
 import { Reflector } from '@nestjs/core';
 import { UserException } from '../exceptions/UserException';
 import { Payload } from '../modules/auth/interface/InterfacePayload';
 import { RedisService } from '../common/redis/redis.service';
+import { PrismaService } from '../common/prisma/prisma.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class Authentication implements CanActivate {
@@ -19,6 +21,7 @@ export class Authentication implements CanActivate {
     private jwtService: JwtService,
     private reflector: Reflector,
     private readonly redisService: RedisService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -37,15 +40,38 @@ export class Authentication implements CanActivate {
         secret: jwtSecret,
       });
 
-      request['user'] = payload;
-
-      const key = this.redisService.prefixUser + ':' + token;
+      const key =
+        this.redisService.prefixUser + ':' + payload.sub + ':' + token;
       const userData = await this.redisService.get(key);
       if (!userData) {
         throw new JsonWebTokenError('Invalid token');
       }
 
-      await this.redisService.client.expire(key, expiresIn); // Reset TTL
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: payload.sub,
+        },
+      });
+
+      if (!user) {
+        throw new JsonWebTokenError('User not found');
+      }
+
+      if (
+        user.password_changed_at &&
+        new Date(payload.iat * 1000) < user.password_changed_at
+      ) {
+        throw new JsonWebTokenError('Token expired');
+      }
+
+      Object.assign(payload, {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
+
+      request['user'] = payload;
+      await this.redisService.client.expire(key, expiresInRedis); // Reset TTL
     } catch (e) {
       if (e instanceof JsonWebTokenError) {
         throw new JsonWebTokenError(e.message);
@@ -62,8 +88,9 @@ export class Authentication implements CanActivate {
 }
 
 export interface FastifyRequestWithUser extends FastifyRequest {
-  user: Payload & {
-    iat: number;
-    exp: number;
-  };
+  user: Payload &
+    Pick<User, 'id' | 'email' | 'name'> & {
+      iat: number;
+      exp: number;
+    };
 }

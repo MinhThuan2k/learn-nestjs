@@ -21,7 +21,8 @@
     "db:generate": "prisma generate --schema=src/common/prisma/schema/",
     "db:push": "prisma db push --schema=src/common/prisma/schema/",
     "db:pull": "prisma db pull --schema=src/common/prisma/schema/",
-    "db:studio": "prisma studio --schema=src/common/prisma/schema/"
+    "db:studio": "prisma studio --schema=src/common/prisma/schema/",
+    "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@fastify/csrf-protection": "^7.1.0",
