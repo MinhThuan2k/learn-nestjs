@@ -6,6 +6,7 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 import { UserDataService } from '../../../common/data/user.service';
 import { REQUEST } from '@nestjs/core';
 import { UserException } from '../../../exceptions/UserException';
+import { hashBcrypt } from '../../../common/helpers/function';
 
 @Injectable()
 export class UsersService {
@@ -38,7 +39,7 @@ export class UsersService {
         where: { id: user.id },
         data: {
           password_changed_at: new Date(),
-          password: dto.password,
+          password: await hashBcrypt(dto.password),
         },
         select: { id: true },
       })

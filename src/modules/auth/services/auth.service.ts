@@ -9,6 +9,7 @@ import { expiresInRedis, isMultipleDevice } from '../../../config/jwt';
 import { Payload } from '../interface/InterfacePayload';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { RedisService } from '../../../common/redis/redis.service';
+import { compareBcrypt } from '../../../common/helpers/function';
 
 @Injectable()
 export class AuthService {
@@ -22,12 +23,12 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
-        password: dto.password,
       },
     });
-    if (!user) {
+
+    if (!user || !(await compareBcrypt(dto.password, user.password))) {
       throw new UserException(
-        'Email or password is incorrect',
+        'Email or Password is incorrect!',
         HttpStatus.UNAUTHORIZED,
       );
     }
