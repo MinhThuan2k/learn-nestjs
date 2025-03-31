@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
-import { host, port, prefix, prefixUser } from '../../config/redis';
-
+import { host, port, prefix, prefixUser, secretKey } from '../../config/redis';
+import CryptoJS from 'crypto-js';
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   public client: Redis;
@@ -48,5 +48,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async delete(key: string): Promise<void> {
     await this.client.del(key);
+  }
+
+  async encryptToken(token: string): Promise<string> {
+    return CryptoJS.AES.encrypt(token, secretKey).toString();
+  }
+
+  async decryptToken(encryptedToken: any): Promise<string> {
+    const bytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
+    return bytes.toString(CryptoJS.enc.Utf8);
   }
 }

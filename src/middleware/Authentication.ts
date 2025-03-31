@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
-import { expiresInRedis, jwtSecret } from '../config/jwt';
+import { expiresInRedis, isMultipleDevice, jwtSecret } from '../config/jwt';
 import { FastifyRequest } from 'fastify';
 import { Reflector } from '@nestjs/core';
 import { UserException } from '../exceptions/UserException';
@@ -20,63 +20,57 @@ export class Authentication implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
-    private readonly redisService: RedisService,
-    private readonly prisma: PrismaService,
+    private redisService: RedisService,
+    private prisma: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const noAuth = this.reflector.get<boolean>('noAuth', context.getHandler());
-    if (noAuth) {
-      return true; // next guard
+    if (this.reflector.get<boolean>('noAuth', context.getHandler())) {
+      return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<FastifyRequestWithUser>();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UserException('Token in not provider', HttpStatus.UNAUTHORIZED);
+      throw new UserException('Token is not provided', HttpStatus.UNAUTHORIZED);
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtSecret,
       });
-
-      const key =
-        this.redisService.prefixUser + ':' + payload.sub + ':' + token;
+      const key = `${this.redisService.prefixUser}:${payload.sub}:${isMultipleDevice ? payload.jit : payload.sub}`;
       const userData = await this.redisService.get(key);
-      if (!userData) {
-        throw new JsonWebTokenError('Invalid token');
+
+      if (
+        !userData ||
+        token !== (await this.redisService.decryptToken(userData))
+      ) {
+        throw new JsonWebTokenError('Invalid or unverified token');
       }
 
       const user = await this.prisma.user.findFirst({
-        where: {
-          id: payload.sub,
-        },
+        where: { id: payload.sub },
       });
-
-      if (!user) {
-        throw new JsonWebTokenError('User not found');
-      }
-
       if (
-        user.password_changed_at &&
-        new Date(payload.iat * 1000) < user.password_changed_at
+        !user ||
+        (user.password_changed_at &&
+          new Date(payload.iat * 1000) < user.password_changed_at)
       ) {
-        throw new JsonWebTokenError('Token expired');
+        throw new JsonWebTokenError(user ? 'Token expired' : 'User not found');
       }
 
-      Object.assign(payload, {
+      request.user = {
+        ...payload,
         id: user.id,
         name: user.name,
         email: user.email,
-      });
-
-      request['user'] = payload;
-      await this.redisService.client.expire(key, expiresInRedis); // Reset TTL
+      };
+      await this.redisService.client.expire(key, expiresInRedis);
     } catch (e) {
-      if (e instanceof JsonWebTokenError) {
-        throw new JsonWebTokenError(e.message);
-      }
-      throw new UnauthorizedException();
+      throw e instanceof JsonWebTokenError
+        ? new JsonWebTokenError(e.message)
+        : new UnauthorizedException();
     }
     return true;
   }
@@ -89,8 +83,5 @@ export class Authentication implements CanActivate {
 
 export interface FastifyRequestWithUser extends FastifyRequest {
   user: Payload &
-    Pick<User, 'id' | 'email' | 'name'> & {
-      iat: number;
-      exp: number;
-    };
+    Pick<User, 'id' | 'email' | 'name'> & { iat: number; exp: number };
 }

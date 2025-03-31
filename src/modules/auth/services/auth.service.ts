@@ -18,7 +18,7 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
-  async signIn(dto: LoginUserDto): Promise<LoginTransform | object | void> {
+  async signIn(dto: LoginUserDto): Promise<LoginTransform> {
     const user = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
@@ -32,22 +32,19 @@ export class AuthService {
       );
     }
 
-    const payload: Payload = { sub: user.id };
-    if (isMultipleDevice) {
-      payload.jit = uuidv4();
-    }
+    const payload: Payload = {
+      sub: user.id,
+      ...(isMultipleDevice && { jit: uuidv4() }),
+    };
     const token = await this.jwtService.signAsync(payload);
+    const cryptoToken = await this.redisService.encryptToken(token);
 
     await this.redisService.set(
-      this.redisService.prefixUser + ':' + user.id + ':' + token,
-      token,
+      `${this.redisService.prefixUser}:${user.id}:${isMultipleDevice ? payload.jit : user.id}`,
+      cryptoToken,
       expiresInRedis,
     );
-    const result = plainToClass(LoginTransform, {
-      token: token,
-      user: user,
-    });
 
-    return result;
+    return plainToClass(LoginTransform, { token, user });
   }
 }
