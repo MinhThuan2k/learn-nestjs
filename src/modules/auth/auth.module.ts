@@ -5,6 +5,8 @@ import { LoginUserDto } from './dto/login.dto';
 import { LoginTransform } from './transformers/login.transform';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtSecret, signOptions } from '../../config/jwt';
+import { GoogleOAuth2Service } from './services/google-oauth2.service';
+import OAuth2Controller from './controllers/oauth2.controller';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { jwtSecret, signOptions } from '../../config/jwt';
       signOptions: signOptions,
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, LoginUserDto, LoginTransform],
+  controllers: [AuthController, OAuth2Controller],
+  providers: [AuthService, GoogleOAuth2Service, LoginUserDto, LoginTransform],
 })
 export class AuthModule {}

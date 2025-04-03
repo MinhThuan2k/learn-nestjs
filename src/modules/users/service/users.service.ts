@@ -7,12 +7,13 @@ import { UserDataService } from '../../../common/data/user.service';
 import { REQUEST } from '@nestjs/core';
 import { UserException } from '../../../exceptions/UserException';
 import { hashBcrypt } from '../../../common/helpers/function';
+import { Users } from '../../../common/models/user.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly uerDataService: UserDataService,
+    private readonly userDataService: UserDataService,
     @Inject(REQUEST)
     private readonly request: FastifyRequestWithUser,
   ) {}
@@ -23,7 +24,7 @@ export class UsersService {
    * @returns {Promise<User | null>} The user data if found, otherwise null.
    */
   async getProfile(request: FastifyRequestWithUser): Promise<User | null> {
-    const user = await this.prisma.user.findFirst({
+    const user = await Users().findFirst({
       where: {
         id: request.user.sub,
       },

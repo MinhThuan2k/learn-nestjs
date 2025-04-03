@@ -5,7 +5,7 @@ import { LoginTransform } from '../transformers/login.transform';
 import { UserException } from '../../../exceptions/UserException';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
-import { expiresInRedis, isMultipleDevice } from '../../../config/jwt';
+import { expiresInRedis } from '../../../config/jwt';
 import { Payload } from '../interface/InterfacePayload';
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { RedisService } from '../../../common/redis/redis.service';
@@ -34,14 +34,15 @@ export class AuthService {
     }
 
     const payload: Payload = {
+      iss: 'clone-jira',
       sub: user.id,
-      ...(isMultipleDevice && { jit: uuidv4() }),
+      jit: uuidv4(),
     };
     const token = await this.jwtService.signAsync(payload);
     const cryptoToken = await this.redisService.encryptToken(token);
 
     await this.redisService.set(
-      `${this.redisService.prefixUser}:${user.id}:${isMultipleDevice ? payload.jit : user.id}`,
+      `${this.redisService.prefixUser}:${user.id}:${payload.jit}`,
       cryptoToken,
       expiresInRedis,
     );

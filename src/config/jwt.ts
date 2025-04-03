@@ -10,4 +10,4 @@ if (expiresIn && expiresIn > 0) {
   signOptions.expiresIn = expiresIn;
 }
 
-export const isMultipleDevice = true;
+export const jwtIssuer = get_env('JWT_ISSUER');

@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
-import { expiresInRedis, isMultipleDevice, jwtSecret } from '../config/jwt';
+import { expiresInRedis, jwtSecret } from '../config/jwt';
 import { FastifyRequest } from 'fastify';
 import { Reflector } from '@nestjs/core';
 import { UserException } from '../exceptions/UserException';
@@ -14,14 +14,17 @@ import { Payload } from '../modules/auth/interface/InterfacePayload';
 import { RedisService } from '../common/redis/redis.service';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { Oauth2Google } from './Oauth2Google';
 
 @Injectable()
 export class Authentication implements CanActivate {
+  readonly arrEqualTokenProvider = [...this.oauth2Google.iss];
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
     private redisService: RedisService,
     private prisma: PrismaService,
+    private oauth2Google: Oauth2Google,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,13 +42,16 @@ export class Authentication implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtSecret,
       });
-      const key = `${this.redisService.prefixUser}:${payload.sub}:${isMultipleDevice ? payload.jit : payload.sub}`;
+      const key = `${this.redisService.prefixUser}:${payload.sub}:${payload.jit}`;
       const userData = await this.redisService.get(key);
+      const decryptToken = await this.redisService.decryptToken(userData);
 
-      if (
-        !userData ||
-        token !== (await this.redisService.decryptToken(userData))
-      ) {
+      // Authentication Google
+      if (this.oauth2Google.iss.includes(payload.extend_iss)) {
+        await this.oauth2Google.verify(decryptToken).catch((err) => {
+          throw new JsonWebTokenError(err);
+        });
+      } else if (token !== decryptToken) {
         throw new JsonWebTokenError('Invalid or unverified token');
       }
 
