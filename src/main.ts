@@ -9,8 +9,8 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { VersioningType } from '@nestjs/common';
 import fastifyCsrfProtection from '@fastify/csrf-protection';
-import { ErrorLoggerExceptions } from '@/exceptions/ErrorLoggerExceptions';
 import { setupSwagger } from '@/config/setupSwagger';
+import { ErrorLoggerException } from '@/exceptions/ErrorLoggerException';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -26,7 +26,7 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI, // API: /v1/auth, /v2/auth
   });
-  app.useGlobalFilters(new ErrorLoggerExceptions());
+  app.useGlobalFilters(new ErrorLoggerException());
 
   dotenv.config();
   setupSwagger(app);

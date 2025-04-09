@@ -14,7 +14,7 @@ import { ValidationException } from '@/common/validations/ValidateException';
 import { get_env } from '@/common/helpers/function';
 
 @Catch()
-export class ErrorLoggerExceptions implements ExceptionFilter {
+export class ErrorLoggerException implements ExceptionFilter {
   useLogging: boolean;
 
   constructor(useLogging = get_env('LOG_ENABLED') === 'true') {
