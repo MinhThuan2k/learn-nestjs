@@ -1,12 +1,12 @@
+import { jwtSecret, signOptions } from '@/config/jwt';
+import AuthController from '@/modules/auth/controllers/auth.controller';
+import OAuth2Controller from '@/modules/auth/controllers/oauth2.controller';
+import { LoginUserDto } from '@/modules/auth/dto/login.dto';
+import { AuthService } from '@/modules/auth/services/auth.service';
+import { GoogleOAuth2Service } from '@/modules/auth/services/google-oauth2.service';
+import { LoginTransform } from '@/modules/auth/transformers/login.transform';
 import { Module } from '@nestjs/common';
-import AuthController from './controllers/auth.controller';
-import { AuthService } from './services/auth.service';
-import { LoginUserDto } from './dto/login.dto';
-import { LoginTransform } from './transformers/login.transform';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtSecret, signOptions } from '../../config/jwt';
-import { GoogleOAuth2Service } from './services/google-oauth2.service';
-import OAuth2Controller from './controllers/oauth2.controller';
 
 @Module({
   imports: [

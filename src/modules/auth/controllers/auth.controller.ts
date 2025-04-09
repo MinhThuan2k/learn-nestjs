@@ -1,10 +1,11 @@
 import { Body, Controller, Injectable, Post, Res } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
-import { AuthService } from '../services/auth.service';
-import { LoginUserDto } from '../dto/login.dto';
-import { ValidationPipe } from '../../../common/validations/ValidationPipe';
+
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { NoAuth } from '../../../middleware/NoAuth';
+import { AuthService } from '@/modules/auth/services/auth.service';
+import { NoAuth } from '@/middleware/NoAuth';
+import { ValidationPipe } from '@/common/validations/ValidationPipe';
+import { LoginUserDto } from '@/modules/auth/dto/login.dto';
 
 @ApiTags('Authentication')
 @Controller({ version: '1' })

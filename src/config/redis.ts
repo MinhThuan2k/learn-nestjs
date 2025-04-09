@@ -1,4 +1,4 @@
-import { get_env } from '../common/helpers/function';
+import { get_env } from '@/common/helpers/function';
 
 export const host: string = get_env('REDIS_HOST');
 export const port: number = +get_env('REDIS_PORT');

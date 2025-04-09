@@ -1,7 +1,7 @@
+import AppController from '@/app.controller';
+import { AppService } from '@/app.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AppService } from './app.service';
-import AppController from './app.controller';
 
 describe('AppController', () => {
   let appController: AppController;

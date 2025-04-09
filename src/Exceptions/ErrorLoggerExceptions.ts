@@ -9,9 +9,9 @@ import { FastifyReply } from 'fastify';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { UserException } from './UserException';
-import { get_env } from '../common/helpers/function';
 import { JsonWebTokenError } from '@nestjs/jwt';
-import { ValidationException } from '../common/validations/ValidateException';
+import { ValidationException } from '@/common/validations/ValidateException';
+import { get_env } from '@/common/helpers/function';
 
 @Catch()
 export class ErrorLoggerExceptions implements ExceptionFilter {

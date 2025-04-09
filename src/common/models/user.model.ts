@@ -1,5 +1,5 @@
+import { prismaSingleton } from '@/common/models/base.model';
 import { PrismaClient } from '@prisma/client';
-import { prismaSingleton } from './base.model';
 
 export const Users = function (
   prismaUser: PrismaClient['user'] = prismaSingleton.user,

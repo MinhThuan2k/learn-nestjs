@@ -1,14 +1,14 @@
+import { UserDataService } from '@/common/data/user.service';
+import { hashBcrypt } from '@/common/helpers/function';
+import { Users } from '@/common/models/user.model';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { UserException } from '@/exceptions/UserException';
+import { FastifyRequestWithUser } from '@/middleware/Authentication';
+import { ChangePasswordDto } from '@/modules/users/dto/change-password.dto';
+import { SignUpDto } from '@/modules/users/dto/signup.dto';
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { User } from '@prisma/client';
-import { FastifyRequestWithUser } from '../../../middleware/Authentication';
-import { ChangePasswordDto } from '../dto/change-password.dto';
-import { UserDataService } from '../../../common/data/user.service';
 import { REQUEST } from '@nestjs/core';
-import { UserException } from '../../../exceptions/UserException';
-import { hashBcrypt } from '../../../common/helpers/function';
-import { Users } from '../../../common/models/user.model';
-import { SignUpDto } from '../dto/signup.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {

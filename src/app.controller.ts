@@ -1,6 +1,6 @@
+import { AppService } from '@/app.service';
 import { Controller, Get, Injectable, Req, Res } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AppService } from './app.service';
 
 @Controller()
 @Injectable()

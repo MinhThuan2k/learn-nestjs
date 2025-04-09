@@ -1,8 +1,8 @@
 import { Controller, Get, Injectable, Query, Res } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { NoAuth } from '../../../middleware/NoAuth';
-import { GoogleOAuth2Service } from '../services/google-oauth2.service';
+import { NoAuth } from '@/middleware/NoAuth';
+import { GoogleOAuth2Service } from '@/modules/auth/services/google-oauth2.service';
 
 @ApiTags('Authentication')
 @Controller({ path: 'auth', version: '1' })

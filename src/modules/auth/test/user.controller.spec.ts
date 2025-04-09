@@ -1,9 +1,9 @@
 import { FastifyReply } from 'fastify';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoginUserDto } from '../dto/login.dto';
-import AuthController from '../controllers/auth.controller';
-import { AuthModule } from '../auth.module';
-import { LoginTransform } from '../transformers/login.transform';
+import AuthController from '@/modules/auth/controllers/auth.controller';
+import { LoginUserDto } from '@/modules/auth/dto/login.dto';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { LoginTransform } from '@/modules/auth/transformers/login.transform';
 
 describe('UserController', () => {
   let userController: AuthController;

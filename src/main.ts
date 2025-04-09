@@ -7,10 +7,10 @@ import qs from 'qs';
 
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
-import { ErrorLoggerExceptions } from './exceptions/ErrorLoggerExceptions';
-import { setupSwagger } from './config/setupSwagger';
 import { VersioningType } from '@nestjs/common';
 import fastifyCsrfProtection from '@fastify/csrf-protection';
+import { ErrorLoggerExceptions } from '@/exceptions/ErrorLoggerExceptions';
+import { setupSwagger } from '@/config/setupSwagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

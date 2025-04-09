@@ -1,6 +1,6 @@
+import { get_env } from '@/common/helpers/function';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { get_env } from '../common/helpers/function';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {

@@ -1,4 +1,4 @@
-import { get_env } from '../common/helpers/function';
+import { get_env } from '@/common/helpers/function';
 
 export const jwtSecret = get_env('JWT_SECRET');
 

@@ -1,5 +1,5 @@
+import { GoogleOAuth2Service } from '@/modules/auth/services/google-oauth2.service';
 import { Injectable } from '@nestjs/common';
-import { GoogleOAuth2Service } from '../modules/auth/services/google-oauth2.service';
 import { JsonWebTokenError } from '@nestjs/jwt';
 
 @Injectable()

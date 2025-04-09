@@ -1,14 +1,14 @@
+import { ValidationPipe } from '@/common/validations/ValidationPipe';
+import { FastifyRequestWithUser } from '@/middleware/Authentication';
+import { NoAuth } from '@/middleware/NoAuth';
+import { ChangePasswordDto } from '@/modules/users/dto/change-password.dto';
+import { SignUpDto } from '@/modules/users/dto/signup.dto';
+import { UsersService } from '@/modules/users/service/users.service';
+import { ProfileTransform } from '@/modules/users/transform/profile.transform';
 import { Body, Controller, Get, Post, Request, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UsersService } from '../service/users.service';
-import { FastifyRequestWithUser } from '../../../middleware/Authentication';
 import { plainToClass } from 'class-transformer';
 import { FastifyReply } from 'fastify';
-import { ProfileTransform } from '../transform/profile.transform';
-import { ChangePasswordDto } from '../dto/change-password.dto';
-import { ValidationPipe } from '../../../common/validations/ValidationPipe';
-import { SignUpDto } from '../dto/signup.dto';
-import { NoAuth } from '../../../middleware/NoAuth';
 
 @ApiTags('Users')
 @Controller({ path: 'users', version: '1' })

@@ -1,5 +1,5 @@
+import { UserDataService } from '@/common/data/user.service';
 import { Global, Module } from '@nestjs/common';
-import { UserDataService } from './user.service';
 
 @Global()
 @Module({

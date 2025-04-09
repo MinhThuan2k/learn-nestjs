@@ -1,9 +1,9 @@
+import AppController from '@/app.controller';
+import { AppService } from '@/app.service';
+import { ImportModule } from '@/import.module';
+import { LoggerMiddleware } from '@/middleware/LoggerMiddleware';
+import { AuthModule } from '@/modules/auth/auth.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ImportModule } from './import.module';
-import AppController from './app.controller';
-import { AppService } from './app.service';
-import { LoggerMiddleware } from './middleware/LoggerMiddleware';
-import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [ImportModule, AuthModule],

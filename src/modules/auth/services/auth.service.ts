@@ -1,15 +1,15 @@
+import { compareBcrypt } from '@/common/helpers/function';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { RedisService } from '@/common/redis/redis.service';
+import { expiresInRedis } from '@/config/jwt';
+import { UserException } from '@/exceptions/UserException';
+import { LoginUserDto } from '@/modules/auth/dto/login.dto';
+import { Payload } from '@/modules/auth/interface/InterfacePayload';
+import { LoginTransform } from '@/modules/auth/transformers/login.transform';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoginUserDto } from '../dto/login.dto';
-import { plainToClass } from 'class-transformer';
-import { LoginTransform } from '../transformers/login.transform';
-import { UserException } from '../../../exceptions/UserException';
 import { JwtService } from '@nestjs/jwt';
+import { plainToClass } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
-import { expiresInRedis } from '../../../config/jwt';
-import { Payload } from '../interface/InterfacePayload';
-import { PrismaService } from '../../../common/prisma/prisma.service';
-import { RedisService } from '../../../common/redis/redis.service';
-import { compareBcrypt } from '../../../common/helpers/function';
 
 @Injectable()
 export class AuthService {

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
-import { host, port, prefix, prefixUser, secretKey } from '../../config/redis';
 import CryptoJS from 'crypto-js';
+import { host, port, prefix, prefixUser, secretKey } from '@/config/redis';
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   public client: Redis;

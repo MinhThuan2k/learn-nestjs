@@ -9,12 +9,12 @@ import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { expiresInRedis, jwtSecret } from '../config/jwt';
 import { FastifyRequest } from 'fastify';
 import { Reflector } from '@nestjs/core';
-import { UserException } from '../exceptions/UserException';
-import { Payload } from '../modules/auth/interface/InterfacePayload';
-import { RedisService } from '../common/redis/redis.service';
-import { PrismaService } from '../common/prisma/prisma.service';
+import { RedisService } from '@/common/redis/redis.service';
+import { PrismaService } from '@/common/prisma/prisma.service';
+import { Oauth2Google } from '@/middleware/Oauth2Google';
+import { UserException } from '@/exceptions/UserException';
+import { Payload } from '@/modules/auth/interface/InterfacePayload';
 import { User } from '@prisma/client';
-import { Oauth2Google } from './Oauth2Google';
 
 @Injectable()
 export class Authentication implements CanActivate {
