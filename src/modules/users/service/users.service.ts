@@ -2,7 +2,7 @@ import { UserDataService } from '@/common/data/user.service';
 import { hashBcrypt } from '@/common/helpers/function';
 import { Users } from '@/common/models/user.model';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { UserException } from '@/exceptions/UserException';
+import { UserException } from '@/exception/UserException';
 import { FastifyRequestWithUser } from '@/middleware/Authentication';
 import { ChangePasswordDto } from '@/modules/users/dto/change-password.dto';
 import { SignUpDto } from '@/modules/users/dto/signup.dto';

@@ -2,7 +2,7 @@ import { compareBcrypt } from '@/common/helpers/function';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { RedisService } from '@/common/redis/redis.service';
 import { expiresInRedis } from '@/config/jwt';
-import { UserException } from '@/exceptions/UserException';
+import { UserException } from '@/exception/UserException';
 import { LoginUserDto } from '@/modules/auth/dto/login.dto';
 import { Payload } from '@/modules/auth/interface/InterfacePayload';
 import { LoginTransform } from '@/modules/auth/transformers/login.transform';

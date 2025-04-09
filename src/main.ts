@@ -10,7 +10,7 @@ import * as dotenv from 'dotenv';
 import { VersioningType } from '@nestjs/common';
 import fastifyCsrfProtection from '@fastify/csrf-protection';
 import { setupSwagger } from '@/config/setupSwagger';
-import { ErrorLoggerException } from '@/exceptions/ErrorLoggerException';
+import { ErrorLoggerException } from '@/exception/ErrorLoggerException';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
