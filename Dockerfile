@@ -13,9 +13,14 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+#PM2 là một process manager 
+RUN npm install -g pm2
+
 # Copy the rest of your application
 COPY . .
 
+# Generate DB prisma
+RUN npm run db:generate
 #Build the application
 RUN npm run build
 
@@ -23,4 +28,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start the app
-CMD ["npm", "start"]
+CMD ["pm2-runtime", "dist/main.js", "--name", "jira-be"]
