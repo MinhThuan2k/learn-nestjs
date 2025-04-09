@@ -8,6 +8,7 @@ import { REQUEST } from '@nestjs/core';
 import { UserException } from '../../../exceptions/UserException';
 import { hashBcrypt } from '../../../common/helpers/function';
 import { Users } from '../../../common/models/user.model';
+import { SignUpDto } from '../dto/signup.dto';
 
 @Injectable()
 export class UsersService {
@@ -47,5 +48,15 @@ export class UsersService {
       .catch(() => {
         throw new UserException('User not found');
       });
+  }
+
+  async signUp(dto: SignUpDto) {
+    await Users().create({
+      data: {
+        email: dto.email,
+        password: await hashBcrypt(dto.password),
+        name: dto.name,
+      },
+    });
   }
 }

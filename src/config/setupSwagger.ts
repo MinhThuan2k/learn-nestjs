@@ -10,9 +10,27 @@ export async function setupSwagger(app) {
 
   documentFactory.paths = Object.keys(documentFactory.paths)
     .sort((a, b) => {
-      const tagA = documentFactory.paths[a]?.get?.tags?.[0] || '';
-      const tagB = documentFactory.paths[b]?.get?.tags?.[0] || '';
-      return tagA.localeCompare(tagB);
+      const opA = documentFactory.paths[a];
+      const opB = documentFactory.paths[b];
+
+      const tagA =
+        opA.get?.tags?.[0] ||
+        opA.post?.tags?.[0] ||
+        opA.put?.tags?.[0] ||
+        opA.delete?.tags?.[0] ||
+        '';
+      const tagB =
+        opB.get?.tags?.[0] ||
+        opB.post?.tags?.[0] ||
+        opB.put?.tags?.[0] ||
+        opB.delete?.tags?.[0] ||
+        '';
+
+      const firstA = tagA.charAt(0).toLowerCase();
+      const firstB = tagB.charAt(0).toLowerCase();
+
+      if (firstA !== firstB) return firstA.localeCompare(firstB);
+      return tagA.length - tagB.length;
     })
     .reduce(
       (acc, key) => {
@@ -21,6 +39,7 @@ export async function setupSwagger(app) {
       },
       {} as typeof documentFactory.paths,
     );
+
   SwaggerModule.setup('api/docs', app, documentFactory);
   console.log(`Swagger URL: url:${process.env.PORT ?? 3000}/api/docs`);
 }

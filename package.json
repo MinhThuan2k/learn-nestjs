@@ -22,7 +22,9 @@
     "db:push": "prisma db push --schema=src/common/prisma/schema/",
     "db:pull": "prisma db pull --schema=src/common/prisma/schema/",
     "db:studio": "prisma studio --schema=src/common/prisma/schema/",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "generate:env": "ts-node scripts/generate-env.ts"
   },
   "dependencies": {
     "@fastify/csrf-protection": "^7.1.0",
