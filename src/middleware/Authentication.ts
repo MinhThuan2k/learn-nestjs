@@ -12,7 +12,7 @@ import { Reflector } from '@nestjs/core';
 import { RedisService } from '@/common/redis/redis.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { Oauth2Google } from '@/middleware/Oauth2Google';
-import { UserException } from '@/exceptions/UserException';
+import { UserException } from '@/exception/UserException';
 import { Payload } from '@/modules/auth/interface/InterfacePayload';
 import { User } from '@prisma/client';
 
