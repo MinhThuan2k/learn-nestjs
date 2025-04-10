@@ -1,0 +1,9 @@
+model Process {
+    id          Int     @default(autoincrement()) @id
+    code        String  @unique
+    title       String? 
+    project_id  Int
+
+    /* Relation */
+    project     Projects     @relation(fields: [project_id], references: [id])
+}

@@ -1,0 +1,18 @@
+model Tasks {
+    id              Int     @default(autoincrement()) @id
+    code            String  @unique
+    title           String? 
+    description     String
+    project_id      Int
+    process_id      Int
+    assigner_id     Int
+    created_by      Int
+    created_at      DateTime @default(now())
+    updated_by      Int
+    updated_at      DateTime @default(now()) @updatedAt
+
+    /* Relation */
+    assigner           User     @relation("TaskAssigner", fields: [assigner_id], references: [id])
+    createdBy          User     @relation("TasksCreatedBy", fields: [created_by], references: [id])
+    updatedBy          User     @relation("TasksUpdatedBy", fields: [updated_by], references: [id])
+}

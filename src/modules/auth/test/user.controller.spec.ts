@@ -22,7 +22,7 @@ describe('UserController', () => {
       send: jest.fn(),
     } as unknown as FastifyReply;
     it('User Login', () => {
-      userController.login(userDto, res);
+      userController.signIn(userDto, res);
       expect(res.send).toHaveBeenCalledWith(expect.any(LoginTransform));
     });
   });
