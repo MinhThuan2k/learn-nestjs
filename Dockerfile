@@ -1,8 +1,9 @@
+
 # Use official Node.js 20 LTS image
 FROM node:20-alpine
 
-# Install git (Node image uses Debian base)
-# RUN apt-get update && apt-get install -y git / curl
+# Install git and curl
+RUN apk update && apk add --no-cache git curl nano
 
 # Set working directory inside the container
 WORKDIR /clone-jira-backend
@@ -13,19 +14,21 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-#PM2 là một process manager 
+# PM2 is a process manager for Node.js
 RUN npm install -g pm2
 
 # Copy the rest of your application
 COPY . .
 
-# Generate DB prisma
+# Generate DB with Prisma
 RUN npm run db:generate
-#Build the application
+
+# Build the application
 RUN npm run build
 
 # Expose the port your app runs on
 EXPOSE 3000
 
-# Start the app
+# Start the app with PM2
 CMD ["pm2-runtime", "dist/main.js", "--name", "jira-be"]
+
