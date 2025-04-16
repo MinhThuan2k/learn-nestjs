@@ -15,6 +15,7 @@ lerna-debug.log*
 # Migrate
 src/common/prisma/migrations/*
 src/common/prisma/migrations/*.toml
+src/common/prisma/generated
 
 #Swagger
 */metadata.ts

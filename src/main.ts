@@ -21,7 +21,9 @@ async function bootstrap() {
   );
 
   await app.register(fastifyCsrfProtection);
-  app.enableCors();
+  app.enableCors({
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  });
   app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI, // API: /v1/auth, /v2/auth
