@@ -1,6 +1,4 @@
-import { UserDataService } from '@/common/data/user.service';
 import { hashBcrypt } from '@/common/helpers/function';
-import { Users } from '@/common/models/user.model';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { UserException } from '@/exception/UserException';
 import { FastifyRequestWithUser } from '@/middleware/Authentication';
@@ -14,7 +12,6 @@ import { User } from '@prisma/client';
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly userDataService: UserDataService,
     @Inject(REQUEST)
     private readonly request: FastifyRequestWithUser,
   ) {}
@@ -25,7 +22,7 @@ export class UsersService {
    * @returns {Promise<User | null>} The user data if found, otherwise null.
    */
   async getProfile(request: FastifyRequestWithUser): Promise<User | null> {
-    const user = await Users().findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
         id: request.user.sub,
       },
@@ -51,7 +48,7 @@ export class UsersService {
   }
 
   async signUp(dto: SignUpDto) {
-    await Users().create({
+    await this.prisma.user.create({
       data: {
         email: dto.email,
         password: await hashBcrypt(dto.password),

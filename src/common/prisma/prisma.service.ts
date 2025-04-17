@@ -12,7 +12,9 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
 {
   async onModuleInit() {
-    await this.$connect();
+    await this.$connect()
+      .then(() => console.log('✅ Database OK!'))
+      .catch(() => console.log('❌ Database No OK!'));
   }
 
   async onModuleDestroy() {

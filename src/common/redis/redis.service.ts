@@ -13,15 +13,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       host: host,
       port: port || 6379,
     });
-
-    this.client.on('connect', () => console.log('🔗 Redis connected'));
-    this.client.on('error', (err) => console.error('❌ Redis error:', err));
   }
 
   async onModuleInit() {
-    console.log('🔄 Checking Redis connection...');
-    await this.client.ping();
-    console.log('✅ Redis is ready!');
+    await this.client.ping(() => console.log('✅ Redis is ready!'));
   }
 
   async onModuleDestroy() {
